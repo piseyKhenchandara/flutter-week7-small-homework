@@ -8,22 +8,22 @@ import '../../../states/settings_state.dart';
 import '../../../theme/theme.dart';
 import '../../favorite/favorite_screen.dart';
 
+import '../view_model/library_view_model.dart';
 
 class LibraryContent extends StatelessWidget {
   const LibraryContent({super.key});
 
-
   @override
   Widget build(BuildContext context) {
-
-    SongRepository songRepository = context.read<SongRepository>();
-    List<Song> songs = songRepository.fetchSongs();
+    //SongRepository songRepository = context.read<SongRepository>();
+    //List<Song> songs = songRepository.fetchSongs();
 
     // 2- Read the globbal settings state
     AppSettingsState settingsState = context.read<AppSettingsState>();
+    LibraryViewModel vm = context.watch<LibraryViewModel>();
 
     // 3 - Watch the globbal player state
-    PlayerState playerState = context.watch<PlayerState>();
+    //PlayerState playerState = context.watch<PlayerState>();
 
     return Container(
       color: settingsState.theme.backgroundColor,
@@ -37,12 +37,12 @@ class LibraryContent extends StatelessWidget {
 
           Expanded(
             child: ListView.builder(
-              itemCount: songs.length,
+              itemCount: vm.songs.length,
               itemBuilder: (context, index) => SongTile(
-                song: songs[index],
-                isPlaying: playerState.currentSong == songs[index],
+                song: vm.songs[index],
+                isPlaying: vm.isPlaying(vm.songs[index]),
                 onTap: () {
-                  playerState.start(songs[index]);
+                  vm..playSong(vm.songs[index]);
                 },
               ),
             ),
@@ -50,11 +50,8 @@ class LibraryContent extends StatelessWidget {
         ],
       ),
     );
-    
   }
 }
-
-
 
 class SongTile extends StatelessWidget {
   const SongTile({
